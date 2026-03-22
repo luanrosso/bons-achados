@@ -1421,7 +1421,7 @@
       <div class="redes-grid">
         <a href="#" class="rede-link" id="linkTiktok"><span class="rede-icon">🎵</span> TikTok</a>
         <a href="#" class="rede-link" id="linkInstagram"><span class="rede-icon">📸</span> Instagram</a>
-        <a href="/grupo" class="rede-link"><span class="rede-icon">💬</span> WhatsApp</a>
+        <a href="#" class="rede-link" id="linkWhatsappRede"><span class="rede-icon">💬</span> WhatsApp</a>
         <a href="#" class="rede-link" id="linkThreads"><span class="rede-icon">🔗</span> Threads</a>
       </div>
     </div>
@@ -1657,6 +1657,11 @@
       if (c.redeThreads) {
         var el = document.getElementById('linkThreads');
         if (el) { el.href = c.redeThreads; el.target = '_blank'; }
+      }
+      // WhatsApp das redes = mesmo link do grupo principal
+      if (c.linkGrupo) {
+        var el = document.getElementById('linkWhatsappRede');
+        if (el) { el.href = c.linkGrupo; el.target = '_blank'; }
       }
     }
 
