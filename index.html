@@ -1113,11 +1113,11 @@
           <div class="hero-stat-label">No grupo</div>
         </div>
         <div class="hero-stat">
-          <div class="hero-stat-number">500+</div>
+          <div class="hero-stat-number" id="statAchados">500+</div>
           <div class="hero-stat-label">Achados postados</div>
         </div>
         <div class="hero-stat">
-          <div class="hero-stat-number">4.9 ⭐</div>
+          <div class="hero-stat-number" id="statAvaliacao">4.9 ⭐</div>
           <div class="hero-stat-label">Avaliação</div>
         </div>
       </div>
@@ -1406,9 +1406,9 @@
         <div class="sobre-img">👩‍💻</div>
       </div>
       <div class="sobre-text">
-        <h3>Oi, eu sou a pessoa por trás do Bons Achados!</h3>
-        <p>Comecei garimpando ofertas pra mim e pras amigas, e quando vi já tinha um grupo enorme de pessoas que confiavam nas minhas indicações.</p>
-        <p>Aqui eu só indico o que eu realmente compraria. Testo, uso e só depois compartilho com vocês. Meu compromisso é com a sua economia e satisfação! 💖</p>
+        <h3 id="sobreTitulo">Oi, eu sou a pessoa por trás do Bons Achados!</h3>
+        <p id="sobreP1">Comecei garimpando ofertas pra mim e pras amigas, e quando vi já tinha um grupo enorme de pessoas que confiavam nas minhas indicações.</p>
+        <p id="sobreP2">Aqui eu só indico o que eu realmente compraria. Testo, uso e só depois compartilho com vocês. Meu compromisso é com a sua economia e satisfação! 💖</p>
       </div>
     </div>
   </section>
@@ -1419,10 +1419,10 @@
       <div class="redes-title">📲 Siga nas redes</div>
       <div class="redes-sub">Fique por dentro das ofertas em todas as plataformas</div>
       <div class="redes-grid">
-        <a href="#" class="rede-link"><span class="rede-icon">🎵</span> TikTok</a>
-        <a href="#" class="rede-link"><span class="rede-icon">📸</span> Instagram</a>
+        <a href="#" class="rede-link" id="linkTiktok"><span class="rede-icon">🎵</span> TikTok</a>
+        <a href="#" class="rede-link" id="linkInstagram"><span class="rede-icon">📸</span> Instagram</a>
         <a href="/grupo" class="rede-link"><span class="rede-icon">💬</span> WhatsApp</a>
-        <a href="#" class="rede-link"><span class="rede-icon">🔗</span> Threads</a>
+        <a href="#" class="rede-link" id="linkThreads"><span class="rede-icon">🔗</span> Threads</a>
       </div>
     </div>
   </section>
@@ -1525,6 +1525,7 @@
         if (d.feedbacks && d.feedbacks.length) renderFeedbacks(d.feedbacks);
         if (d.cuponsLoja && d.cuponsLoja.length) renderCuponsLoja(d.cuponsLoja);
         if (d.videos && d.videos.length) renderVideos(d.videos);
+        if (d.config) aplicarConfig(d.config);
       } catch(e) {}
     }
 
@@ -1600,6 +1601,64 @@
     }
 
     carregarDados();
+
+    // ===== APLICAR CONFIGURAÇÕES =====
+    function aplicarConfig(c) {
+      // Links do grupo (botões da Home)
+      if (c.linkGrupo) {
+        document.querySelectorAll('a[href="/grupo"]').forEach(function(el) {
+          if (!el.classList.contains('whatsapp-float')) {
+            el.href = c.linkGrupo;
+            el.target = '_blank';
+          }
+        });
+        // WhatsApp float também usa link do grupo principal
+        var wf = document.querySelector('.whatsapp-float');
+        if (wf) { wf.href = c.linkGrupo; wf.target = '_blank'; }
+      }
+
+      // Contador
+      if (c.contador) {
+        var el = document.getElementById('contadorGrupo');
+        if (el) el.textContent = c.contador;
+      }
+      if (c.achadosPostados) {
+        var el = document.getElementById('statAchados');
+        if (el) el.textContent = c.achadosPostados;
+      }
+      if (c.avaliacao) {
+        var el = document.getElementById('statAvaliacao');
+        if (el) el.textContent = c.avaliacao;
+      }
+
+      // Sobre mim
+      if (c.sobreTitulo) {
+        var el = document.getElementById('sobreTitulo');
+        if (el) el.textContent = c.sobreTitulo;
+      }
+      if (c.sobreP1) {
+        var el = document.getElementById('sobreP1');
+        if (el) el.textContent = c.sobreP1;
+      }
+      if (c.sobreP2) {
+        var el = document.getElementById('sobreP2');
+        if (el) el.textContent = c.sobreP2;
+      }
+
+      // Redes sociais
+      if (c.redeTiktok) {
+        var el = document.getElementById('linkTiktok');
+        if (el) { el.href = c.redeTiktok; el.target = '_blank'; }
+      }
+      if (c.redeInstagram) {
+        var el = document.getElementById('linkInstagram');
+        if (el) { el.href = c.redeInstagram; el.target = '_blank'; }
+      }
+      if (c.redeThreads) {
+        var el = document.getElementById('linkThreads');
+        if (el) { el.href = c.redeThreads; el.target = '_blank'; }
+      }
+    }
 
     // ===== CUPONS DE LOJA =====
     function renderCuponsLoja(cuponsLoja) {

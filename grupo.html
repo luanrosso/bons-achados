@@ -163,10 +163,22 @@
   </div>
 
   <script>
+    // Link padrão (fallback)
+    var linkPadrao = "https://chat.whatsapp.com/" + atob("RVNZVHBxRHk3dG5CcXhpaktmRGI4aQ==");
+
+    async function carregarLink() {
+      try {
+        var r = await fetch('/api/dados?t=' + Date.now(), {cache:'no-store'});
+        var d = await r.json();
+        if (d && d.config && d.config.linkTrafego) {
+          linkPadrao = d.config.linkTrafego;
+        }
+      } catch(e) {}
+    }
+    carregarLink();
+
     function entrar() {
-      var p1 = "https://chat.whatsapp.com/";
-      var p2 = atob("RVNZVHBxRHk3dG5CcXhpaktmRGI4aQ==");
-      window.location.href = p1 + p2;
+      window.location.href = linkPadrao;
     }
   </script>
 </body>

@@ -141,6 +141,7 @@
       <button class="tab" onclick="switchTab('feedbacks')">💬 Feedbacks</button>
       <button class="tab" onclick="switchTab('pendentes')">📩 Pendentes</button>
       <button class="tab" onclick="switchTab('videos')">🎬 Vídeos</button>
+      <button class="tab" onclick="switchTab('config')">⚙️ Config</button>
       <button class="tab" onclick="switchTab('gerador')">🔗 Gerador</button>
     </div>
 
@@ -349,6 +350,60 @@
       </div>
     </div>
 
+    <!-- ========== ABA CONFIGURAÇÕES ========== -->
+    <div class="tab-content" id="tab-config">
+      <div class="card">
+        <div class="card-title">🔗 Links dos Grupos</div>
+        <div class="form-section">
+          <label>Link do grupo principal (botões "Grupo VIP" e "Entrar no grupo de ofertas")</label>
+          <input type="text" id="cfg-link-grupo" placeholder="https://chat.whatsapp.com/...">
+          <p style="font-size:11px;color:var(--gray);margin-bottom:12px;">Esse link é usado nos botões do site. Quem clica no site vai pra cá.</p>
+
+          <label>Link do grupo para tráfego pago (rota /grupo)</label>
+          <input type="text" id="cfg-link-trafego" placeholder="https://chat.whatsapp.com/...">
+          <p style="font-size:11px;color:var(--gray);margin-bottom:12px;">Esse link é usado na rota /grupo. Quem vem do tráfego pago vai pra cá.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📊 Contador do Grupo</div>
+        <div class="form-section">
+          <label>Quantidade de pessoas no grupo</label>
+          <input type="text" id="cfg-contador" placeholder="2.500+">
+          <label>Quantidade de achados postados</label>
+          <input type="text" id="cfg-achados-postados" placeholder="500+">
+          <label>Avaliação</label>
+          <input type="text" id="cfg-avaliacao" placeholder="4.9 ⭐">
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">👩 Sobre Mim</div>
+        <div class="form-section">
+          <label>Título</label>
+          <input type="text" id="cfg-sobre-titulo" placeholder="Oi, eu sou a pessoa por trás do Bons Achados!">
+          <label>Parágrafo 1</label>
+          <textarea id="cfg-sobre-p1" placeholder="Comecei garimpando ofertas pra mim e pras amigas..."></textarea>
+          <label>Parágrafo 2</label>
+          <textarea id="cfg-sobre-p2" placeholder="Aqui eu só indico o que eu realmente compraria..."></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">📲 Redes Sociais</div>
+        <div class="form-section">
+          <label>Link do TikTok</label>
+          <input type="text" id="cfg-rede-tiktok" placeholder="https://tiktok.com/@...">
+          <label>Link do Instagram</label>
+          <input type="text" id="cfg-rede-instagram" placeholder="https://instagram.com/...">
+          <label>Link do Threads</label>
+          <input type="text" id="cfg-rede-threads" placeholder="https://threads.net/@...">
+        </div>
+      </div>
+
+      <button class="btn" onclick="salvarConfig()">💾 Salvar configurações</button>
+    </div>
+
     <!-- ========== ABA GERADOR (original intacta) ========== -->
     <div class="tab-content" id="tab-gerador">
       <div class="card">
@@ -393,7 +448,7 @@
   <script>
     // ===== STATE =====
     var senhaAtual = '';
-    var dados = { achados:[], cupons:[], relampago:[], feedbacks:[], cuponsLoja:[], videos:[] };
+    var dados = { achados:[], cupons:[], relampago:[], feedbacks:[], cuponsLoja:[], videos:[], config:{} };
     var editandoIdx = { achados:-1, cupons:-1, relampago:-1, feedbacks:-1, cuponsLoja:-1, videos:-1 };
 
     // Gerador state (original)
@@ -470,9 +525,11 @@
           dados.feedbacks = d.feedbacks || [];
           dados.cuponsLoja = d.cuponsLoja || [];
           dados.videos = d.videos || [];
+          dados.config = d.config || {};
         }
         renderAll();
         carregarPendentes();
+        preencherConfig();
       } catch(e) { renderAll(); }
     }
 
@@ -904,6 +961,40 @@
       await fetch('/api/feedback-publico', {method:'DELETE', headers:{'Content-Type':'application/json'}, body:JSON.stringify({senha:senhaAtual, index:i})});
       carregarPendentes();
       showToast('🗑️ Rejeitado!');
+    }
+
+    // ===== CONFIGURAÇÕES =====
+    function preencherConfig() {
+      var c = dados.config || {};
+      document.getElementById('cfg-link-grupo').value = c.linkGrupo || '';
+      document.getElementById('cfg-link-trafego').value = c.linkTrafego || '';
+      document.getElementById('cfg-contador').value = c.contador || '';
+      document.getElementById('cfg-achados-postados').value = c.achadosPostados || '';
+      document.getElementById('cfg-avaliacao').value = c.avaliacao || '';
+      document.getElementById('cfg-sobre-titulo').value = c.sobreTitulo || '';
+      document.getElementById('cfg-sobre-p1').value = c.sobreP1 || '';
+      document.getElementById('cfg-sobre-p2').value = c.sobreP2 || '';
+      document.getElementById('cfg-rede-tiktok').value = c.redeTiktok || '';
+      document.getElementById('cfg-rede-instagram').value = c.redeInstagram || '';
+      document.getElementById('cfg-rede-threads').value = c.redeThreads || '';
+    }
+
+    function salvarConfig() {
+      dados.config = {
+        linkGrupo: document.getElementById('cfg-link-grupo').value.trim(),
+        linkTrafego: document.getElementById('cfg-link-trafego').value.trim(),
+        contador: document.getElementById('cfg-contador').value.trim(),
+        achadosPostados: document.getElementById('cfg-achados-postados').value.trim(),
+        avaliacao: document.getElementById('cfg-avaliacao').value.trim(),
+        sobreTitulo: document.getElementById('cfg-sobre-titulo').value.trim(),
+        sobreP1: document.getElementById('cfg-sobre-p1').value.trim(),
+        sobreP2: document.getElementById('cfg-sobre-p2').value.trim(),
+        redeTiktok: document.getElementById('cfg-rede-tiktok').value.trim(),
+        redeInstagram: document.getElementById('cfg-rede-instagram').value.trim(),
+        redeThreads: document.getElementById('cfg-rede-threads').value.trim(),
+      };
+      salvarDados();
+      showToast('✅ Configurações salvas!');
     }
 
     // ===== GERADOR (código original intacto) =====
