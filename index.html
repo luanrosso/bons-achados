@@ -1082,6 +1082,7 @@
         <a href="#cupons" class="nav-link">Cupons</a>
         <a href="#cupons-loja" class="nav-link">Cupons de Loja</a>
         <a href="#sobre" class="nav-link">Sobre</a>
+        <a href="/curso" class="nav-link" style="color:var(--pink);">Quero ser afiliado</a>
         <a href="/grupo" class="nav-link cta">💬 Grupo VIP</a>
         <button class="mobile-menu-btn" onclick="toggleMenu()">☰</button>
       </nav>
@@ -1097,6 +1098,7 @@
       <a href="#cupons-loja" class="mobile-nav-link" onclick="toggleMenu()">🏪 Cupons de Loja</a>
       <a href="#videos" class="mobile-nav-link" onclick="toggleMenu()">🎬 Reviews</a>
       <a href="#sobre" class="mobile-nav-link" onclick="toggleMenu()">👩 Sobre mim</a>
+      <a href="/curso" class="mobile-nav-link" onclick="toggleMenu()">🎓 Quero ser afiliado</a>
       <a href="/grupo" class="mobile-nav-link cta">💬 Entrar no Grupo VIP</a>
     </div>
   </div>
@@ -1721,17 +1723,24 @@
       // YouTube
       var ytMatch = url.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/)|youtu\.be\/)([\w-]+)/);
       if (ytMatch) {
-        return '<div class="video-embed-wrap youtube"><iframe src="https://www.youtube.com/embed/' + ytMatch[1] + '?autoplay=0" allowfullscreen loading="lazy"></iframe></div>';
+        var isShort = url.includes('/shorts/');
+        var cls = isShort ? '' : ' youtube';
+        return '<div class="video-embed-wrap' + cls + '"><iframe src="https://www.youtube.com/embed/' + ytMatch[1] + '?autoplay=0" allowfullscreen loading="lazy"></iframe></div>';
       }
-      // TikTok
-      var ttMatch = url.match(/tiktok\.com\/@[\w.]+\/video\/(\d+)/);
+      // TikTok - usa oEmbed via cite url
+      var ttMatch = url.match(/tiktok\.com\/@[^/]+\/video\/(\d+)/);
+      if (!ttMatch) {
+        var ttMatch2 = url.match(/tiktok\.com\/.*?(\d{15,})/);
+        if (ttMatch2) ttMatch = ttMatch2;
+      }
       if (ttMatch) {
-        return '<div class="video-embed-wrap"><iframe src="https://www.tiktok.com/embed/v2/' + ttMatch[1] + '" allowfullscreen loading="lazy"></iframe></div>';
+        var videoId = ttMatch[1];
+        return '<div class="video-embed-wrap"><iframe src="https://www.tiktok.com/player/v1/' + videoId + '?music_info=0&description=0" allowfullscreen loading="lazy" allow="autoplay"></iframe></div>';
       }
-      // Instagram Reels
+      // Instagram Reels - embed limpo sem caption
       var igMatch = url.match(/instagram\.com\/(?:reel|p)\/([\w-]+)/);
       if (igMatch) {
-        return '<div class="video-embed-wrap"><iframe src="https://www.instagram.com/p/' + igMatch[1] + '/embed" allowfullscreen loading="lazy"></iframe></div>';
+        return '<div class="video-embed-wrap"><iframe src="https://www.instagram.com/reel/' + igMatch[1] + '/embed/?hidecaption=true" allowfullscreen loading="lazy" scrolling="no"></iframe></div>';
       }
       // Fallback
       return '<div class="video-placeholder">▶️<span><a href="' + url + '" target="_blank" style="color:#fff;">Assistir vídeo</a></span></div>';

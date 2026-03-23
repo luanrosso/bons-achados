@@ -142,6 +142,7 @@
       <button class="tab" onclick="switchTab('pendentes')">📩 Pendentes</button>
       <button class="tab" onclick="switchTab('videos')">🎬 Vídeos</button>
       <button class="tab" onclick="switchTab('config')">⚙️ Config</button>
+      <button class="tab" onclick="switchTab('cursos')">🎓 Cursos</button>
       <button class="tab" onclick="switchTab('gerador')">🔗 Gerador</button>
     </div>
 
@@ -406,6 +407,90 @@
       <button class="btn" onclick="salvarConfig()">💾 Salvar configurações</button>
     </div>
 
+    <!-- ========== ABA CURSOS ========== -->
+    <div class="tab-content" id="tab-cursos">
+      <div class="card">
+        <div class="card-title">⚙️ Configuração da página /curso</div>
+        <div class="form-section">
+          <h3>Hero (topo)</h3>
+          <label>Badge</label>
+          <input type="text" id="curso-cfg-badge" placeholder="🎓 Comece a ganhar dinheiro online">
+          <label>Título</label>
+          <input type="text" id="curso-cfg-titulo" placeholder="Aprenda a faturar como afiliado e com TikTok Shop">
+          <label>Texto</label>
+          <textarea id="curso-cfg-texto" placeholder="Eu vou te ensinar tudo o que eu sei..."></textarea>
+        </div>
+        <div class="form-section">
+          <h3>Vídeo de apresentação</h3>
+          <label>URL do YouTube</label>
+          <input type="text" id="curso-cfg-video" placeholder="https://youtube.com/watch?v=...">
+        </div>
+        <div class="form-section">
+          <h3>Seção de cursos</h3>
+          <label>Título da seção</label>
+          <input type="text" id="curso-cfg-secao-titulo" placeholder="Cursos Disponíveis">
+          <label>Subtítulo</label>
+          <input type="text" id="curso-cfg-secao-sub" placeholder="Escolha o melhor caminho pra você">
+        </div>
+        <div class="form-section">
+          <h3>CTA final</h3>
+          <label>Título</label>
+          <input type="text" id="curso-cfg-cta-titulo" placeholder="Ainda tem dúvidas?">
+          <label>Subtítulo</label>
+          <input type="text" id="curso-cfg-cta-sub" placeholder="Entra no nosso grupo que a gente te ajuda!">
+          <label>Texto do botão</label>
+          <input type="text" id="curso-cfg-cta-texto" placeholder="💬 Falar no WhatsApp">
+          <label>Link do botão</label>
+          <input type="text" id="curso-cfg-cta-link" placeholder="https://chat.whatsapp.com/...">
+        </div>
+        <button class="btn" onclick="salvarCursoConfig()">💾 Salvar configuração da página</button>
+      </div>
+
+      <div class="card">
+        <div class="card-title">➕ Novo curso</div>
+        <div class="form-section">
+          <div class="form-row">
+            <div>
+              <label>Nome do curso</label>
+              <input type="text" id="curso-nome" placeholder="Curso TikTok Shop">
+            </div>
+            <div>
+              <label>Emoji</label>
+              <input type="text" id="curso-emoji" placeholder="🎬" maxlength="4">
+            </div>
+          </div>
+          <label>Descrição</label>
+          <textarea id="curso-desc" placeholder="Aprenda do zero a vender no TikTok Shop..."></textarea>
+          <label>Destaques (um por linha)</label>
+          <textarea id="curso-destaques" placeholder="Aulas práticas do zero&#10;Suporte direto comigo&#10;Acesso vitalício"></textarea>
+          <div class="form-row">
+            <div>
+              <label>Preço de (riscado)</label>
+              <input type="text" id="curso-preco-de" placeholder="297,00">
+            </div>
+            <div>
+              <label>Preço atual</label>
+              <input type="text" id="curso-preco" placeholder="147,00">
+            </div>
+          </div>
+          <label>Info do preço (ex: "ou 12x de R$14,58")</label>
+          <input type="text" id="curso-preco-info" placeholder="ou 12x de R$14,58">
+          <label>Texto do botão</label>
+          <input type="text" id="curso-btn-texto" placeholder="Quero começar!">
+          <label>Link do botão (Kiwify, Hotmart, etc)</label>
+          <input type="text" id="curso-link" placeholder="https://kiwify.com.br/...">
+          <button class="btn" onclick="salvarCurso()">💾 Salvar curso</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">🎓 Cursos cadastrados</div>
+        <div class="item-list" id="cursos-list">
+          <div class="empty-state">Nenhum curso cadastrado</div>
+        </div>
+      </div>
+    </div>
+
     <!-- ========== ABA GERADOR (original intacta) ========== -->
     <div class="tab-content" id="tab-gerador">
       <div class="card">
@@ -450,8 +535,8 @@
   <script>
     // ===== STATE =====
     var senhaAtual = '';
-    var dados = { achados:[], cupons:[], relampago:[], feedbacks:[], cuponsLoja:[], videos:[], config:{} };
-    var editandoIdx = { achados:-1, cupons:-1, relampago:-1, feedbacks:-1, cuponsLoja:-1, videos:-1 };
+    var dados = { achados:[], cupons:[], relampago:[], feedbacks:[], cuponsLoja:[], videos:[], config:{}, cursoConfig:{}, cursos:[] };
+    var editandoIdx = { achados:-1, cupons:-1, relampago:-1, feedbacks:-1, cuponsLoja:-1, videos:-1, cursos:-1 };
 
     // Gerador state (original)
     var temCupom = false;
@@ -528,10 +613,13 @@
           dados.cuponsLoja = d.cuponsLoja || [];
           dados.videos = d.videos || [];
           dados.config = d.config || {};
+          dados.cursoConfig = d.cursoConfig || {};
+          dados.cursos = d.cursos || [];
         }
         renderAll();
         carregarPendentes();
         preencherConfig();
+        preencherCursoConfig();
       } catch(e) { renderAll(); }
     }
 
@@ -548,6 +636,7 @@
       renderFeedbacks();
       renderCuponsLoja();
       renderVideos();
+      renderCursos();
     }
 
     // ===== ACHADOS =====
@@ -966,6 +1055,108 @@
       await fetch('/api/feedback-publico', {method:'DELETE', headers:{'Content-Type':'application/json'}, body:JSON.stringify({senha:senhaAtual, index:i})});
       carregarPendentes();
       showToast('🗑️ Rejeitado!');
+    }
+
+    // ===== CURSOS =====
+    function preencherCursoConfig() {
+      var c = dados.cursoConfig || {};
+      document.getElementById('curso-cfg-badge').value = c.heroBadge || '';
+      document.getElementById('curso-cfg-titulo').value = c.heroTitulo || '';
+      document.getElementById('curso-cfg-texto').value = c.heroTexto || '';
+      document.getElementById('curso-cfg-video').value = c.videoUrl || '';
+      document.getElementById('curso-cfg-secao-titulo').value = c.secaoTitulo || '';
+      document.getElementById('curso-cfg-secao-sub').value = c.secaoSub || '';
+      document.getElementById('curso-cfg-cta-titulo').value = c.ctaTitulo || '';
+      document.getElementById('curso-cfg-cta-sub').value = c.ctaSub || '';
+      document.getElementById('curso-cfg-cta-texto').value = c.ctaTexto || '';
+      document.getElementById('curso-cfg-cta-link').value = c.ctaLink || '';
+    }
+
+    function salvarCursoConfig() {
+      dados.cursoConfig = {
+        heroBadge: document.getElementById('curso-cfg-badge').value.trim(),
+        heroTitulo: document.getElementById('curso-cfg-titulo').value.trim(),
+        heroTexto: document.getElementById('curso-cfg-texto').value.trim(),
+        videoUrl: document.getElementById('curso-cfg-video').value.trim(),
+        secaoTitulo: document.getElementById('curso-cfg-secao-titulo').value.trim(),
+        secaoSub: document.getElementById('curso-cfg-secao-sub').value.trim(),
+        ctaTitulo: document.getElementById('curso-cfg-cta-titulo').value.trim(),
+        ctaSub: document.getElementById('curso-cfg-cta-sub').value.trim(),
+        ctaTexto: document.getElementById('curso-cfg-cta-texto').value.trim(),
+        ctaLink: document.getElementById('curso-cfg-cta-link').value.trim(),
+      };
+      salvarDados();
+      showToast('✅ Config da página de curso salva!');
+    }
+
+    function salvarCurso() {
+      var nome = document.getElementById('curso-nome').value.trim();
+      var emoji = document.getElementById('curso-emoji').value.trim() || '🎓';
+      var descricao = document.getElementById('curso-desc').value.trim();
+      var destaques = document.getElementById('curso-destaques').value.trim();
+      var precoDe = document.getElementById('curso-preco-de').value.trim();
+      var preco = document.getElementById('curso-preco').value.trim();
+      var precoInfo = document.getElementById('curso-preco-info').value.trim();
+      var btnTexto = document.getElementById('curso-btn-texto').value.trim() || 'Quero começar!';
+      var link = document.getElementById('curso-link').value.trim();
+      if (!nome || !preco) { showToast('⚠️ Preencha nome e preço!'); return; }
+      var item = { nome:nome, emoji:emoji, descricao:descricao, destaques:destaques, precoDe:precoDe, preco:preco, precoInfo:precoInfo, btnTexto:btnTexto, link:link };
+      if (editandoIdx.cursos >= 0) {
+        dados.cursos[editandoIdx.cursos] = item;
+        editandoIdx.cursos = -1;
+      } else {
+        dados.cursos.push(item);
+      }
+      salvarDados(); renderCursos();
+      document.getElementById('curso-nome').value = '';
+      document.getElementById('curso-emoji').value = '';
+      document.getElementById('curso-desc').value = '';
+      document.getElementById('curso-destaques').value = '';
+      document.getElementById('curso-preco-de').value = '';
+      document.getElementById('curso-preco').value = '';
+      document.getElementById('curso-preco-info').value = '';
+      document.getElementById('curso-btn-texto').value = '';
+      document.getElementById('curso-link').value = '';
+      showToast('✅ Curso salvo!');
+    }
+
+    function renderCursos() {
+      var el = document.getElementById('cursos-list');
+      if (!dados.cursos || !dados.cursos.length) { el.innerHTML = '<div class="empty-state">Nenhum curso cadastrado</div>'; return; }
+      el.innerHTML = dados.cursos.map(function(c, i) {
+        return '<div class="item-card">' +
+          '<div style="font-size:28px;">' + (c.emoji || '🎓') + '</div>' +
+          '<div class="item-card-info">' +
+            '<div class="item-card-name">' + c.nome + '</div>' +
+            '<div class="item-card-sub">R$ ' + c.preco + '</div>' +
+          '</div>' +
+          '<div class="item-card-actions">' +
+            '<button class="btn-edit" onclick="editarCurso(' + i + ')">✏️</button>' +
+            '<button class="btn-delete" onclick="deletarCurso(' + i + ')">🗑️</button>' +
+          '</div>' +
+        '</div>';
+      }).join('');
+    }
+
+    function editarCurso(i) {
+      var c = dados.cursos[i];
+      document.getElementById('curso-nome').value = c.nome;
+      document.getElementById('curso-emoji').value = c.emoji;
+      document.getElementById('curso-desc').value = c.descricao;
+      document.getElementById('curso-destaques').value = c.destaques || '';
+      document.getElementById('curso-preco-de').value = c.precoDe || '';
+      document.getElementById('curso-preco').value = c.preco;
+      document.getElementById('curso-preco-info').value = c.precoInfo || '';
+      document.getElementById('curso-btn-texto').value = c.btnTexto || '';
+      document.getElementById('curso-link').value = c.link || '';
+      editandoIdx.cursos = i;
+    }
+
+    function deletarCurso(i) {
+      if (!confirm('Remover este curso?')) return;
+      dados.cursos.splice(i, 1);
+      salvarDados(); renderCursos();
+      showToast('🗑️ Removido!');
     }
 
     // ===== CONFIGURAÇÕES =====

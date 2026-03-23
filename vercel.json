@@ -4,6 +4,7 @@
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/gerar", "destination": "/gerar.html" },
     { "source": "/grupo", "destination": "/grupo.html" },
+    { "source": "/curso", "destination": "/curso.html" },
     { "source": "/", "destination": "/index.html" }
   ]
 }
