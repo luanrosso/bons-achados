@@ -1371,7 +1371,10 @@
           <div class="cupom-loja-item" onclick="copiarCupom('SHOPEE10')">
             <span class="cupom-loja-code">SHOPEE10</span>
             <span class="cupom-loja-desc">10% OFF primeira compra</span>
-            <button class="cupom-copiar">Copiar</button>
+            <div style="display:flex;gap:6px;align-items:center;">
+              <button class="cupom-copiar">Copiar</button>
+              <a href="#" class="cupom-copiar" style="background:var(--mint-dark);text-decoration:none;" onclick="event.stopPropagation()">Ir pra loja</a>
+            </div>
           </div>
         </div>
       </div>
@@ -1686,10 +1689,14 @@
           '</div>' +
           '<div class="cupom-loja-lista">' +
             l.cupons.map(function(c) {
+              var btnLoja = c.link ? '<a href="' + c.link + '" target="_blank" class="cupom-copiar" style="background:var(--mint-dark);margin-left:6px;" onclick="event.stopPropagation()">Ir pra loja</a>' : '';
               return '<div class="cupom-loja-item" onclick="copiarCupom(\'' + c.codigo + '\')">' +
                 '<span class="cupom-loja-code">' + c.codigo + '</span>' +
                 '<span class="cupom-loja-desc">' + c.desc + '</span>' +
-                '<button class="cupom-copiar">Copiar</button>' +
+                '<div style="display:flex;gap:6px;align-items:center;">' +
+                  '<button class="cupom-copiar">Copiar</button>' +
+                  btnLoja +
+                '</div>' +
               '</div>';
             }).join('') +
           '</div>' +

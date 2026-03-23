@@ -304,6 +304,8 @@
               <input type="text" id="cloja-desc" placeholder="10% OFF primeira compra">
             </div>
           </div>
+          <label>Link da loja</label>
+          <input type="text" id="cloja-link" placeholder="https://shopee.com.br/...">
           <button class="btn" onclick="salvarCupomLoja()">💾 Salvar cupom de loja</button>
         </div>
       </div>
@@ -814,8 +816,9 @@
       var icon = document.getElementById('cloja-icon').value.trim() || '🏪';
       var codigo = document.getElementById('cloja-codigo').value.trim();
       var desc = document.getElementById('cloja-desc').value.trim();
+      var link = document.getElementById('cloja-link').value.trim();
       if (!loja || !codigo) { showToast('⚠️ Preencha loja e código!'); return; }
-      var item = { loja:loja, icon:icon, codigo:codigo, desc:desc };
+      var item = { loja:loja, icon:icon, codigo:codigo, desc:desc, link:link };
       if (editandoIdx.cuponsLoja >= 0) {
         dados.cuponsLoja[editandoIdx.cuponsLoja] = item;
         editandoIdx.cuponsLoja = -1;
@@ -827,6 +830,7 @@
       document.getElementById('cloja-icon').value = '';
       document.getElementById('cloja-codigo').value = '';
       document.getElementById('cloja-desc').value = '';
+      document.getElementById('cloja-link').value = '';
       showToast('✅ Cupom de loja salvo!');
     }
 
@@ -854,6 +858,7 @@
       document.getElementById('cloja-icon').value = c.icon;
       document.getElementById('cloja-codigo').value = c.codigo;
       document.getElementById('cloja-desc').value = c.desc;
+      document.getElementById('cloja-link').value = c.link || '';
       editandoIdx.cuponsLoja = i;
     }
 
