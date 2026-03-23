@@ -293,7 +293,8 @@
       transition: all 0.3s;
       text-decoration: none;
       color: inherit;
-      display: block;
+      display: flex;
+      flex-direction: column;
     }
 
     .achado-card:hover {
@@ -338,7 +339,7 @@
       50% { opacity: 0.7; }
     }
 
-    .achado-info { padding: 14px; }
+    .achado-info { padding: 14px; flex: 1; }
 
     .achado-cat {
       font-size: 11px;
@@ -387,7 +388,7 @@
       font-size: 12px;
       font-weight: 800;
       padding: 8px;
-      margin: 0 14px 14px;
+      margin: auto 14px 14px;
       border-radius: var(--radius-sm);
       text-decoration: none;
       transition: all 0.2s;
@@ -519,6 +520,13 @@
 
     .categoria-card:hover {
       border-color: var(--pink-border);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+    }
+
+    .categoria-card.active {
+      border-color: var(--pink);
+      background: var(--pink-light);
       transform: translateY(-3px);
       box-shadow: var(--shadow-hover);
     }
@@ -1276,25 +1284,25 @@
       </div>
     </div>
     <div class="categorias-grid">
-      <a href="#" class="categoria-card">
+      <a href="javascript:void(0)" class="categoria-card" onclick="filtrarCategoria('Moda e Roupas', this)">
         <span class="categoria-icon">👗</span>
         <div class="categoria-name">Moda e Roupas</div>
-        <div class="categoria-count">120+ achados</div>
+        <div class="categoria-count">Ver achados</div>
       </a>
-      <a href="#" class="categoria-card">
+      <a href="javascript:void(0)" class="categoria-card" onclick="filtrarCategoria('Beleza e Skincare', this)">
         <span class="categoria-icon">💄</span>
         <div class="categoria-name">Beleza e Skincare</div>
-        <div class="categoria-count">85+ achados</div>
+        <div class="categoria-count">Ver achados</div>
       </a>
-      <a href="#" class="categoria-card">
+      <a href="javascript:void(0)" class="categoria-card" onclick="filtrarCategoria('Casa e Decoração', this)">
         <span class="categoria-icon">🏠</span>
         <div class="categoria-name">Casa e Decoração</div>
-        <div class="categoria-count">70+ achados</div>
+        <div class="categoria-count">Ver achados</div>
       </a>
-      <a href="#" class="categoria-card">
+      <a href="javascript:void(0)" class="categoria-card" onclick="filtrarCategoria('Eletrônicos e Tech', this)">
         <span class="categoria-icon">📱</span>
         <div class="categoria-name">Eletrônicos e Tech</div>
-        <div class="categoria-count">60+ achados</div>
+        <div class="categoria-count">Ver achados</div>
       </a>
     </div>
   </section>
@@ -1534,11 +1542,28 @@
       } catch(e) {}
     }
 
-    function renderAchados(achados) {
-      var destaques = achados.filter(function(a) { return a.destaque; });
-      var lista = destaques.length ? destaques : achados;
+    var todosAchados = [];
+    var filtroAtivo = null;
+
+    function renderAchados(achados, filtro) {
+      if (achados) todosAchados = achados;
+      var lista = todosAchados;
+
+      // Se tem filtro de categoria, filtra
+      if (filtro) {
+        lista = todosAchados.filter(function(a) { return a.cat === filtro; });
+      } else {
+        // Sem filtro: mostra destaques se houver
+        var destaques = todosAchados.filter(function(a) { return a.destaque; });
+        if (destaques.length) lista = destaques;
+      }
+
       var el = document.getElementById('achadosScroll');
       if (!el) return;
+      if (!lista.length) {
+        el.innerHTML = '<div style="padding:20px;color:var(--gray);font-size:13px;font-weight:600;">Nenhum achado nessa categoria ainda</div>';
+        return;
+      }
       el.innerHTML = lista.map(function(a) {
         var desconto = '';
         if (a.precoOriginal && a.preco) {
@@ -1564,6 +1589,21 @@
           '<div class="achado-btn">Ver oferta →</div>' +
         '</a>';
       }).join('');
+    }
+
+    function filtrarCategoria(cat, el) {
+      // Toggle: se clicou na mesma, desfiltra
+      if (filtroAtivo === cat) {
+        filtroAtivo = null;
+        document.querySelectorAll('.categoria-card').forEach(function(c) { c.classList.remove('active'); });
+      } else {
+        filtroAtivo = cat;
+        document.querySelectorAll('.categoria-card').forEach(function(c) { c.classList.remove('active'); });
+        if (el) el.classList.add('active');
+      }
+      renderAchados(null, filtroAtivo);
+      // Scroll pra seção de achados
+      document.getElementById('achadosScroll').scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 
     function renderCupons(cupons) {
