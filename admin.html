@@ -237,10 +237,12 @@
               <input type="text" id="relampago-preco" placeholder="29,90">
             </div>
             <div>
-              <label>Emoji</label>
+              <label>Emoji (se sem imagem)</label>
               <input type="text" id="relampago-emoji" placeholder="💄" maxlength="4">
             </div>
           </div>
+          <label>URL da imagem do produto</label>
+          <input type="text" id="relampago-img" placeholder="https://... ou deixe vazio pra usar emoji">
           <label>Link do produto (afiliado)</label>
           <input type="text" id="relampago-link" placeholder="https://shope.ee/...">
           <button class="btn" onclick="salvarRelampago()">💾 Salvar oferta</button>
@@ -766,8 +768,9 @@
       var preco = document.getElementById('relampago-preco').value.trim();
       var emoji = document.getElementById('relampago-emoji').value.trim() || '⚡';
       var link = document.getElementById('relampago-link').value.trim();
+      var img = document.getElementById('relampago-img').value.trim();
       if (!nome || !preco) { showToast('⚠️ Preencha nome e preço!'); return; }
-      var item = { nome:nome, preco:preco, emoji:emoji, link:link };
+      var item = { nome:nome, preco:preco, emoji:emoji, link:link, img:img };
       if (editandoIdx.relampago >= 0) {
         dados.relampago[editandoIdx.relampago] = item;
         editandoIdx.relampago = -1;
@@ -804,6 +807,7 @@
       document.getElementById('relampago-preco').value = r.preco;
       document.getElementById('relampago-emoji').value = r.emoji;
       document.getElementById('relampago-link').value = r.link || '';
+      document.getElementById('relampago-img').value = r.img || '';
       editandoIdx.relampago = i;
       switchTab('relampago');
       window.scrollTo(0, 0);
@@ -892,6 +896,7 @@
         document.getElementById('relampago-preco').value = '';
         document.getElementById('relampago-emoji').value = '';
         document.getElementById('relampago-link').value = '';
+        document.getElementById('relampago-img').value = '';
       } else if (tipo === 'feedback') {
         document.getElementById('feedback-autor').value = '';
         document.getElementById('feedback-texto').value = '';
