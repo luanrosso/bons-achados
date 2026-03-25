@@ -11,7 +11,7 @@ module.exports = async (req, res) => {
   if (!link || typeof link !== "string")
     return res.status(400).json({ error: "Link inválido ou ausente." });
 
-  const isShopee = link.includes("shopee.com.br") || link.includes("shope.ee") || link.includes("s.shopee");
+  const isShopee = link.includes("shopee.com.br") || link.includes("shope.ee") || link.includes("s.shopee") || link.includes("shp.ee");
   if (!isShopee) return res.status(400).json({ error: "Por favor, insira um link válido da Shopee." });
 
   const APP_ID = process.env.SHOPEE_APP_ID;
